@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/Style/editarProducto.css">
+    <script>
+        function visualizarFoto(event) {
+            var imagen = document.getElementById('imagenPreview');
+            imagen.src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
+</head>
+<body>
+    <div class="cc">
+        <div class="contenedor">
+            <h3>Editar Producto</h3>
+            <form  action="{{ url_for('actualizar_producto', producto_id=producto['_id']) }}" method="POST" enctype="multipart/form-data">
+                <div class="cct">
+                    <div class="o">
+                        <span>Codigo :</span>
+                        <input class="form-control" id="codigo" name="codigo" placeholder="Codigo" type="text"value="{{ producto['codigo'] }}">
+                    </div>
+                    <div class="o">
+                        <span>Nombre :</span>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ producto['nombre'] }}">
+                    </div>
+                    <div class="o">
+                        <span>Precio :</span>
+                        <input type="text" class="form-control" id="precio" name="precio" value="{{ producto['precio'] }}">
+                    </div>
+                    <div class="o">
+                        <span>Categoria :</span>
+                        <select class="form-control" id="categoria" name="categoria">
+                            {% for cat in categorias %}
+                                <option value="{{ cat['_id'] }}" {% if cat['_id'] == producto['categoria'] %} selected {% endif %}>{{ cat['nombre'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="Fotos">
+                                <div class="d-flex ll">
+                                    <div class="d-flex flex-column align-items-center c1">
+                                        <span>Foto actual:</span>
+                                        <img src="../static/Img/{{ producto['_id'] }}.jpg" alt="Foto actual" width="100" height="100">
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center gap-3">
+                                        <span>Foto a cargar:</span>
+                                        <div class="d-flex flex-column align-items-center gap-2 c2">
+                                            <input  class="ee" type="file" id="imagen" name="imagen" onchange="visualizarFoto(event)">
+                                            <img id="imagenPreview" src="" alt="Vista previa de la imagen" style="width: 100px; height: 100px;">
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+    
+                <div class="bb">
+                    <button  type="submit" class="btn btn-primary">Actualizar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

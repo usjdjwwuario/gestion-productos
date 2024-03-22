@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="/static/css/css/frmIniciarSeccion.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="iniciarSesion">
+            <div class="form-container">
+                <p class="title">Login</p>
+                <form class="form" method="post" action="{{ url_for('iniciarSesion') }}">
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <input type="email" name="correo" required class="inputField" id="username"
+                            placeholder="Username">
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="contraseña" required class="inputField" id="password"
+                            placeholder="Password">
+                    </div>
+                    <button class="sign" id="button">Ingresar</button>
+                    <p>{{mensaje}}</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
