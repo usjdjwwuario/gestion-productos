@@ -1,8 +1,6 @@
 from app import app
 from flask import Flask, render_template, request, redirect, session,url_for
-import yagmail
 import pymongo
-from werkzeug.utils import secure_filename
 from app import app, conexion, db, categorias, productos, usuarios
 @app.route("/")
 def visitaIniciarSeccion():
@@ -22,6 +20,8 @@ def iniciarSesion():
             return redirect (url_for("mostrarProdutos"))
         else:
             mensaje = "Datos no validos"   
-    except pymongo.errors as error:
-        mensaje = error
+    except pymongo.errors.PyMongoError as error:
+        mensaje = str(error)
+    print("Error de MongoDB:", mensaje)
+    
     return render_template("frmIniciarSeccion.html",estado=estado,mensaje=mensaje)

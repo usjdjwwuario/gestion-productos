@@ -4,13 +4,11 @@ from pymongo import MongoClient
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"]="./static/imagenes"
 
-
-
 conexion = MongoClient("mongodb://localhost:27017")
 
-db = conexion["Datosss"]
+db = conexion["gestion-productos"]
 
-categorias = db["Categorias"]
+categorias = db["categorias"]
 productos = db["productos"]
 usuarios = db["usuarios"]
 

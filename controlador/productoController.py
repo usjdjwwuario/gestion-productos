@@ -5,11 +5,11 @@ from PIL import Image
 from io import BytesIO
 import base64
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
-from app import app, conexion, db, categorias, productos, usuarios
+from app import app
+from baseDATOS.mongodb import productos, categorias
 
 
-
-@app.route("/mostrarProductos", methods=['GET'])
+@app.route("/mostrarProductos", methods=['GET', 'POST'])
 def mostrarProductos():
     if 'usuario' in session:
         listaProductos = productos.find()
@@ -24,15 +24,15 @@ def mostrarProductos():
             listaP.append(p)
         return render_template("listaProductos.html", productos=listaP, listaCategorias=listaCategorias)
     else:
-        return render_template("frmIniciarSeccion.html") 
+        return redirect(url_for('login'))  # Redirigir al formulario de inicio de sesión si el usuario no está autenticado
     
 @app.route('/vistaAgregarProducto', methods=['GET'])
 def vistaAgregarProducto():
     categorias_from_db = categorias.find()
-    return render_template('listarProductos.html', categorias=categorias_from_db)
+    return render_template('Form.html', categorias=categorias_from_db)
 
-@app.route('/agregarProducto1', methods=['POST'])
-def agregarProducto1():
+@app.route('/agregarProducto', methods=['POST'])
+def agregarProducto():
     mensaje = None
     estado = False
     try:
@@ -58,8 +58,8 @@ def agregarProducto1():
             mensaje = 'Problema Al Agregar El Producto'
     except pymongo.errors.PyMongoError as error:  
         mensaje = str(error)
-        flash((mensaje, estado)) 
-        return redirect(url_for('listaProductos'))
+        flash((mensaje, estado))  # Usar flash para pasar el mensaje y el estado a la página siguiente
+    return redirect(url_for('listaProductos'))
 
 
 
@@ -76,8 +76,8 @@ def consultarProducto(codigo):
         return False
 
 
-@app.route('/agregarProducto', methods=['POST'])
-def agregarProducto():
+@app.route('/agregarProductoJson', methods=['POST'])
+def agregarProductoJson():
     estado = False
     mensaje = None
     try:
@@ -108,6 +108,18 @@ def agregarProducto():
     return jsonify(retorno)
 
 
+@app.route("/consultar/<codigo>", methods= ["GET"])
+def consultar(codigo):
+    if ("user" in session):
+        #se hace para una consulta
+        producto = producto.objects(codigo=codigo).first()
+        listaCategorias = categorias.objects()
+        return render_template("editar.html", producto=producto, categorias=listaCategorias)
+    else:
+        mensaje="Debe de primero de ingresar sus credenciales"
+        return render_template("login.html", mensaje=mensaje)
+
+
 @app.route("/consultar/<codigo>", methods=["GET"])
 def consultarPorCodigo(codigo):
     estado=False
@@ -122,7 +134,7 @@ def consultarPorCodigo(codigo):
     except pymongo.errors as error:
         mensaje=error
     listaCategorias = categorias.find()
-    return render_template("editar.html", producto=producto, categorias=listaCategorias)
+    return render_template("formEditar.html", producto=producto, categorias=listaCategorias)
 
 
 @app.route("/editar", methods=["POST"])
@@ -144,6 +156,7 @@ def editar():
         }
 
         resultado = productos.update_one({'_id':idProducto},{"$set": producto})
+        #acknowledged que indica si el servidor de MongoDB confirmó que recibió y procesó la operación de escritura.
         if (resultado.acknowledged):
             listaCategorias = categorias.find()
 
@@ -156,4 +169,4 @@ def editar():
 
     except pymongo.errors as error:
         mensaje=error
-    return render_template("editar.html", producto=producto, categorias=listaCategorias)
+    return render_template("formEditar.html", producto=producto, categorias=listaCategorias)
