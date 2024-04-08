@@ -6,7 +6,7 @@ from io import BytesIO
 import base64
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
 from app import app
-from baseDATOS.mongodb import productos, categorias
+from app import productos, categorias
 
 
 @app.route("/mostrarProductos", methods=['GET', 'POST'])
